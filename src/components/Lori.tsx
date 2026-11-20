@@ -90,6 +90,7 @@ export default function Lori({
       >
         <AssetImage
           assetKey={assetKey}
+          fallbackKey="lori_talk"
           className="w-full h-full object-contain"
           showLabel={false}
         />

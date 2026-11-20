@@ -42,7 +42,7 @@ export function Greeting({ onComplete }: GreetingProps) {
 
       {ready && (
         <Lori
-          pose="drop"
+          pose="talk"
           message={GREETING}
           x={SCREEN_WIDTH + SCREEN_WIDTH / 2 - 350}
           y={180}

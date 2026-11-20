@@ -4,6 +4,7 @@ import type { MaterialCategory } from '@/game/types';
 
 interface AssetImageProps {
   assetKey: string;
+  fallbackKey?: string;
   className?: string;
   style?: React.CSSProperties;
   /** category overrides the placeholder color; auto-detected from asset key prefix if omitted */
@@ -42,19 +43,33 @@ function guessCategory(key: string): MaterialCategory {
 
 export default function AssetImage({
   assetKey,
+  fallbackKey,
   className = '',
   style,
   category,
   showLabel = true,
   onClick,
 }: AssetImageProps) {
+  const [activeKey, setActiveKey] = useState(assetKey);
   const [errored, setErrored] = useState(false);
-  const path = assetPath(assetKey);
-  const cat = category ?? guessCategory(assetKey);
+
+  // Reset when assetKey changes
+  useEffect(() => {
+    setActiveKey(assetKey);
+    setErrored(false);
+  }, [assetKey]);
+
+  const path = assetPath(activeKey);
+  const cat = category ?? guessCategory(activeKey);
   const colors = CATEGORY_COLORS[cat];
 
-  // Reset error state when the asset key changes
-  useEffect(() => setErrored(false), [assetKey]);
+  const handleImageError = () => {
+    if (fallbackKey && activeKey !== fallbackKey) {
+      setActiveKey(fallbackKey);
+    } else {
+      setErrored(true);
+    }
+  };
 
   if (!path || errored) {
     const filename = path ? path.split('/').pop() : `${assetKey}.png`;
@@ -82,11 +97,11 @@ export default function AssetImage({
   return (
     <img
       src={path}
-      alt={assetLabel(assetKey)}
+      alt={assetLabel(activeKey)}
       className={className}
       style={style}
       onClick={onClick}
-      onError={() => setErrored(true)}
+      onError={handleImageError}
       draggable={false}
     />
   );

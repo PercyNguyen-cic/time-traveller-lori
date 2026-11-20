@@ -42,9 +42,10 @@ export function LoadingScreen({ onStart }: LoadingScreenProps) {
       className="absolute inset-0 flex items-center justify-center anim-fade-in"
       onClick={handleStart}
     >
-      {/* Background - replace with your animated background */}
+      {/* Background - uses bg_attract (or custom loading_bg if present) */}
       <AssetImage
         assetKey="loading_bg"
+        fallbackKey="bg_attract"
         className="absolute inset-0 w-full h-full object-cover"
         showLabel={false}
       />
