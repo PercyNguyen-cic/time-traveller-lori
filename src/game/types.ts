@@ -1,19 +1,20 @@
-export type Phase =
-  | 'attract'
-  | 'select'
-  | 'forage'
-  | 'assemble'
-  | 'reveal';
+export type Phase = 'loading' | 'select' | 'forage' | 'assemble' | 'reveal';
 
 export type MaterialCategory = 'wood' | 'stone' | 'bone' | 'cordage';
+
+export interface MaterialVariant {
+  id: string;
+  label: string;
+  rawAsset: string;
+  shapedAsset?: string;
+  finalAsset: string;
+}
 
 export interface MaterialSpec {
   id: string;
   label: string;
   category: MaterialCategory;
-  rawAsset: string;
-  shapedAsset?: string;
-  finalAsset: string;
+  variants: [MaterialVariant, MaterialVariant];
   /** x position in stage coords (0-5760) where the forage target appears */
   forageX: number;
   /** y position in stage coords (0-1080) where the forage target appears */
@@ -35,8 +36,31 @@ export interface ToolSpec {
   summary: string;
 }
 
-export type PhaseStep =
-  | 'shape'
-  | 'attach'
-  | 'bind'
-  | 'done';
+/** A tool with specific variants chosen for each material. */
+export interface ResolvedMaterial {
+  id: string;
+  label: string;
+  variantLabel: string;
+  category: MaterialCategory;
+  rawAsset: string;
+  shapedAsset?: string;
+  finalAsset: string;
+  forageX: number;
+  forageY: number;
+  station: 1 | 2 | 3;
+}
+
+export interface ResolvedTool {
+  id: string;
+  name: string;
+  shortName: string;
+  originRegion: string;
+  cardAsset: string;
+  finalAsset: string;
+  silhouetteAsset: string;
+  materials: [ResolvedMaterial, ResolvedMaterial, ResolvedMaterial];
+  originFact: string;
+  summary: string;
+}
+
+export type PhaseStep = 'shape' | 'attach' | 'bind' | 'done';

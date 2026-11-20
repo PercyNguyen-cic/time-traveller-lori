@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import Lori from '@/components/Lori';
 import AssetImage from '@/components/AssetImage';
-import { TOOLS } from '@/game/toolData';
+import { TOOLS, SCREEN_WIDTH } from '@/game/toolData';
 import { Sound } from '@/game/sound';
 import type { ToolSpec } from '@/game/types';
 
 const GREETING =
   'Bzzzt! Hi there, time-traveler! I am Lori, your beetle buddy! Let us zoom back in time to discover how Indigenous peoples made amazing tools using just the earth around them!';
+
+const STAGE_W = 5760;
 
 interface AttractProps {
   onStart: () => void;
@@ -50,7 +52,14 @@ export function Attract({ onStart }: AttractProps) {
         showLabel={false}
       />
       <div className="absolute inset-0 bg-black/30" />
-      <Lori pose="drop" message={GREETING} x={2660} y={500} chimeOnChange={false} />
+      <Lori
+        pose="drop"
+        message={GREETING}
+        x={2660}
+        y={400}
+        chimeOnChange={false}
+        bigFly
+      />
     </div>
   );
 }
@@ -60,14 +69,11 @@ interface SelectProps {
 }
 
 export function Select({ onSelect }: SelectProps) {
-  // 4 cards evenly spread across 5760px: positions at 1/8, 3/8, 5/8, 7/8
+  // 3 cards evenly spread across 5760px, one centered on each screen
   const cardW = 1100;
-  const positions = [
-    STAGE_W * 0.125 - cardW / 2,
-    STAGE_W * 0.375 - cardW / 2,
-    STAGE_W * 0.625 - cardW / 2,
-    STAGE_W * 0.875 - cardW / 2,
-  ];
+  const positions = TOOLS.map(
+    (_, i) => SCREEN_WIDTH * i + SCREEN_WIDTH / 2 - cardW / 2,
+  );
 
   return (
     <div className="absolute inset-0 anim-fade-in">
@@ -85,7 +91,7 @@ export function Select({ onSelect }: SelectProps) {
         </h1>
       </div>
 
-      {/* 4 tool cards */}
+      {/* 3 tool cards - one per screen */}
       {TOOLS.map((tool, i) => (
         <button
           key={tool.id}
@@ -124,5 +130,3 @@ export function Select({ onSelect }: SelectProps) {
     </div>
   );
 }
-
-const STAGE_W = 5760;

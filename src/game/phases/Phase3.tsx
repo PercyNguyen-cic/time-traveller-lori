@@ -4,10 +4,10 @@ import AssetImage from '@/components/AssetImage';
 import Sparkles from '@/components/Sparkles';
 import { Sound } from '@/game/sound';
 import { TAPS_TO_SHAPE } from '@/game/toolData';
-import type { ToolSpec, MaterialSpec, PhaseStep } from '@/game/types';
+import type { ResolvedTool, PhaseStep } from '@/game/types';
 
 interface AssembleProps {
-  tool: ToolSpec;
+  tool: ResolvedTool;
   onComplete: () => void;
 }
 
@@ -24,6 +24,7 @@ export function Assemble({ tool, onComplete }: AssembleProps) {
   const [itemX, setItemX] = useState(STATION_X[0]); // current position of item on belt
   const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
   const [sparkleAt, setSparkleAt] = useState<{ x: number; y: number } | null>(null);
+  const [beltImageX, setBeltImageX] = useState(0); // offset of the moving conveyor image
   const dragRef = useRef<{ id: string; offsetX: number; offsetY: number } | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +33,7 @@ export function Assemble({ tool, onComplete }: AssembleProps) {
   const mat2 = tool.materials.find((m) => m.station === 2)!;
   const mat3 = tool.materials.find((m) => m.station === 3)!;
 
-  // Move belt to a target station
+  // Move belt to a target station - also slides the conveyor image
   const moveBelt = useCallback((targetIdx: number, onArrive: () => void) => {
     setBeltMoving(true);
     const target = STATION_X[targetIdx];
@@ -48,6 +49,7 @@ export function Assemble({ tool, onComplete }: AssembleProps) {
           if (frame >= steps) return target;
           return next;
         });
+        setBeltImageX((prev) => prev + stepSize);
         if (frame < steps) {
           requestAnimationFrame(tick);
         } else {
@@ -77,7 +79,7 @@ export function Assemble({ tool, onComplete }: AssembleProps) {
 
   // Station 2: drag head onto shaft
   const handleDragStart = useCallback(
-    (e: React.PointerEvent, mat: MaterialSpec) => {
+    (e: React.PointerEvent) => {
       if (step !== 'attach' || attached) return;
       e.preventDefault();
       const stage = stageRef.current;
@@ -90,27 +92,15 @@ export function Assemble({ tool, onComplete }: AssembleProps) {
       const stageY = py / scale;
       const itemW = 220;
       dragRef.current = {
-        id: mat.id,
+        id: mat2.id,
         offsetX: stageX - (STATION_X[1] - itemW / 2),
         offsetY: stageY - (BELT_Y - 100),
       };
       setDragPos({ x: stageX - itemW / 2, y: stageY - 100 });
       Sound.pop();
     },
-    [step, attached],
+    [step, attached, mat2.id],
   );
-
-  const handleDragMove = useCallback((e: React.PointerEvent) => {
-    if (!dragRef.current) return;
-    e.preventDefault();
-    const stage = stageRef.current;
-    if (!stage) return;
-    const rect = stage.getBoundingClientRect();
-    const scale = rect.width / 5760;
-    const px = e.clientX - rect.left;
-    const py = e.clientY - rect.top;
-    setDragPos({ x: px / scale - 110, y: py / scale - 100 });
-  }, []);
 
   const handleDragEnd = useCallback(() => {
     if (!dragRef.current) return;
@@ -223,31 +213,45 @@ export function Assemble({ tool, onComplete }: AssembleProps) {
     step === 'shape'
       ? shaped
         ? 'Great shaping! Off to the next station!'
-        : `Tap ${TAPS_TO_SHAPE} times to chip and shape the ${mat1.label}!`
+        : `Tap ${TAPS_TO_SHAPE} times to chip and shape the ${mat1.variantLabel}!`
       : step === 'attach'
         ? attached
           ? 'Perfect snap! Off to the binding station!'
-          : `Drag the ${mat2.label} onto the handle!`
+          : `Drag the ${mat2.variantLabel} onto the handle!`
         : step === 'bind'
           ? bound
             ? 'Beautiful! Your tool is complete!'
-            : `Drag the ${mat3.label} onto the joint to bind it!`
+            : `Drag the ${mat3.variantLabel} onto the joint to bind it!`
           : 'All done!';
 
   return (
-    <div
-      ref={stageRef}
-      className="absolute inset-0 anim-wipe-in"
-      onPointerMove={handleDragMove}
-    >
+    <div ref={stageRef} className="absolute inset-0 anim-wipe-in">
       <AssetImage
         assetKey="bg_conveyor"
         className="absolute inset-0 w-full h-full object-cover"
         showLabel={false}
       />
 
-      {/* Conveyor belt - full width */}
-      <ConveyorBelt />
+      {/* Moving conveyor image that slides right under the tool.
+          You draw the belt rolling to the right as bg_conveyor.png.
+          This is a moving strip image layered on top that translates
+          rightward every time the belt moves. It wraps seamlessly. */}
+      <div
+        className="absolute z-10 pointer-events-none overflow-hidden"
+        style={{ left: 0, top: BELT_Y, width: 5760, height: 120 }}
+      >
+        <div
+          style={{
+            width: 11520, // double width for seamless wrap
+            height: 120,
+            transform: `translateX(${beltImageX % 5760}px)`,
+            backgroundImage:
+              'repeating-linear-gradient(90deg, #333 0px, #333 60px, #444 60px, #444 120px)',
+            borderTop: '6px solid #555',
+            borderBottom: '6px solid #555',
+          }}
+        />
+      </div>
 
       {/* Station labels */}
       {['Shaping', 'Attach', 'Bind'].map((label, i) => (
@@ -320,7 +324,7 @@ export function Assemble({ tool, onComplete }: AssembleProps) {
           />
           {/* Draggable head/tip */}
           <div
-            onPointerDown={(e) => handleDragStart(e, mat2)}
+            onPointerDown={handleDragStart}
             className="absolute z-25 cursor-grab active:cursor-grabbing touch-none"
             style={{
               left: dragPos?.x ?? STATION_X[1] - 400,
@@ -377,38 +381,8 @@ export function Assemble({ tool, onComplete }: AssembleProps) {
         message={loriMessage}
         x={80}
         y={780}
+        bigFly={bound}
       />
-    </div>
-  );
-}
-
-function ConveyorBelt() {
-  return (
-    <div
-      className="absolute z-10 anim-belt"
-      style={{
-        left: 0,
-        top: BELT_Y,
-        width: 5760,
-        height: 120,
-        background: 'repeating-linear-gradient(90deg, #333 0px, #333 80px, #555 80px, #555 120px)',
-        borderTop: '8px solid #666',
-        borderBottom: '8px solid #666',
-      }}
-    >
-      {/* Belt rollers */}
-      {[0, 960, 1920, 2880, 3840, 4800, 5760].map((x, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full bg-gradient-to-b from-gray-500 to-gray-700"
-          style={{
-            left: x - 30,
-            top: -20,
-            width: 60,
-            height: 160,
-          }}
-        />
-      ))}
     </div>
   );
 }

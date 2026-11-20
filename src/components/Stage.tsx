@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef, type ReactNode } from 'react';
-import { STAGE_WIDTH, STAGE_HEIGHT } from '@/game/toolData';
+import { STAGE_WIDTH, STAGE_HEIGHT, SCREEN_WIDTH } from '@/game/toolData';
 
 interface StageProps {
   children: ReactNode;
   className?: string;
+  /** show temporary black dividers between the 3 screens */
+  showDividers?: boolean;
 }
 
 /**
@@ -11,7 +13,7 @@ interface StageProps {
  * 16:3 ultra-wide aspect ratio. On the triple-monitor exhibit it displays at
  * full size; on a single preview monitor it scales down proportionally.
  */
-export default function Stage({ children, className = '' }: StageProps) {
+export default function Stage({ children, className = '', showDividers = true }: StageProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
@@ -42,6 +44,28 @@ export default function Stage({ children, className = '' }: StageProps) {
         }}
       >
         <div className={`absolute inset-0 ${className}`}>{children}</div>
+
+        {/* Temporary screen dividers - black lines at 1920px and 3840px */}
+        {showDividers && (
+          <>
+            <div
+              className="absolute top-0 bottom-0 z-50 pointer-events-none"
+              style={{
+                left: SCREEN_WIDTH - 2,
+                width: 4,
+                backgroundColor: '#000',
+              }}
+            />
+            <div
+              className="absolute top-0 bottom-0 z-50 pointer-events-none"
+              style={{
+                left: SCREEN_WIDTH * 2 - 2,
+                width: 4,
+                backgroundColor: '#000',
+              }}
+            />
+          </>
+        )}
       </div>
     </div>
   );

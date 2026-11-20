@@ -2,10 +2,10 @@ import { useState, useCallback } from 'react';
 import Lori from '@/components/Lori';
 import AssetImage from '@/components/AssetImage';
 import { Sound } from '@/game/sound';
-import type { ToolSpec, MaterialSpec } from '@/game/types';
+import type { ResolvedTool, ResolvedMaterial } from '@/game/types';
 
 interface ForageProps {
-  tool: ToolSpec;
+  tool: ResolvedTool;
   onComplete: () => void;
 }
 
@@ -17,7 +17,7 @@ export function Forage({ tool, onComplete }: ForageProps) {
   const allMaterials = tool.materials;
 
   const handleTap = useCallback(
-    (mat: MaterialSpec) => {
+    (mat: ResolvedMaterial) => {
       if (collected.has(mat.id)) return;
       Sound.chime();
       setFlying(mat.id);
