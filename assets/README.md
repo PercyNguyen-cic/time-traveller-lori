@@ -41,11 +41,6 @@ automatically replace the color-coded placeholder boxes with your artwork.
 `adze_stone_raw.png`, `adze_stone_shaped.png`, `adze_lashing.png`,
 `adze_final.png`, `adze_silhouette.png`
 
-### Bone Awl (`/assets/tools/`)
-`awl_card.png`, `awl_bone_raw.png`, `awl_bone_shaped.png`,
-`awl_tip_raw.png`, `awl_tip_shaped.png`, `awl_grip.png`,
-`awl_final.png`, `awl_silhouette.png`
-
 ### Fishing Spear (`/assets/tools/`)
 `spear_card.png`, `spear_pole_raw.png`, `spear_pole_shaped.png`,
 `spear_prong_raw.png`, `spear_prong_shaped.png`, `spear_cordage.png`,

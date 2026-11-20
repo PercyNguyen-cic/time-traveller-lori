@@ -3,10 +3,10 @@ import Lori from '@/components/Lori';
 import AssetImage from '@/components/AssetImage';
 import Confetti from '@/components/Confetti';
 import { Sound } from '@/game/sound';
-import type { ToolSpec } from '@/game/types';
+import type { ResolvedTool } from '@/game/types';
 
 interface RevealProps {
-  tool: ToolSpec;
+  tool: ResolvedTool;
   onMakeAnother: () => void;
   onAllDone: () => void;
 }
@@ -72,7 +72,7 @@ export function Reveal({ tool, onMakeAnother, onAllDone }: RevealProps) {
         pose="celebrate"
         message={tool.originFact}
         x={3760}
-        y={420}
+        y={200}
       />
 
       {/* Completion summary pop-up */}
@@ -121,7 +121,7 @@ export function Reveal({ tool, onMakeAnother, onAllDone }: RevealProps) {
   );
 }
 
-function SummaryPopup({ tool, onClose }: { tool: ToolSpec; onClose: () => void }) {
+function SummaryPopup({ tool, onClose }: { tool: ResolvedTool; onClose: () => void }) {
   return (
     <div className="absolute inset-0 z-40 flex items-center justify-center anim-fade-in">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
@@ -221,8 +221,8 @@ function GoodbyeScreen({ onReset }: { onReset: () => void }) {
       <Lori
         pose="wave"
         message="Bye bye, time-traveler! Come back and build another tool soon!"
-        x={2660}
-        y={400}
+        x={2460}
+        y={200}
         chimeOnChange={false}
       />
       <div className="absolute bottom-24 left-1/2 -translate-x-1/2 text-white/60 text-3xl font-bold">

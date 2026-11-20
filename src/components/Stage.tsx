@@ -4,18 +4,19 @@ import { STAGE_WIDTH, STAGE_HEIGHT, SCREEN_WIDTH } from '@/game/toolData';
 interface StageProps {
   children: ReactNode;
   className?: string;
-  /** show temporary black dividers between the 3 screens */
-  showDividers?: boolean;
 }
 
 /**
  * Scales the fixed 5760x1080 stage to fit the viewport while preserving the
  * 16:3 ultra-wide aspect ratio. On the triple-monitor exhibit it displays at
  * full size; on a single preview monitor it scales down proportionally.
+ *
+ * Press 'D' to toggle the temporary black screen-divider lines.
  */
-export default function Stage({ children, className = '', showDividers = true }: StageProps) {
+export default function Stage({ children, className = '' }: StageProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  const [dividers, setDividers] = useState(true);
 
   useEffect(() => {
     function update() {
@@ -28,6 +29,17 @@ export default function Stage({ children, className = '', showDividers = true }:
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
+  }, []);
+
+  // 'D' key toggles screen dividers
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'd' || e.key === 'D') {
+        setDividers((prev) => !prev);
+      }
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
   return (
@@ -46,7 +58,7 @@ export default function Stage({ children, className = '', showDividers = true }:
         <div className={`absolute inset-0 ${className}`}>{children}</div>
 
         {/* Temporary screen dividers - black lines at 1920px and 3840px */}
-        {showDividers && (
+        {dividers && (
           <>
             <div
               className="absolute top-0 bottom-0 z-50 pointer-events-none"

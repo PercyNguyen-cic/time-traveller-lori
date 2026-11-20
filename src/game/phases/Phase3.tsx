@@ -232,25 +232,34 @@ export function Assemble({ tool, onComplete }: AssembleProps) {
         showLabel={false}
       />
 
-      {/* Moving conveyor image that slides right under the tool.
-          You draw the belt rolling to the right as bg_conveyor.png.
-          This is a moving strip image layered on top that translates
-          rightward every time the belt moves. It wraps seamlessly. */}
+      {/* Moving conveyor strip image that slides right under the tool.
+          Register your own conveyor_strip.png in the asset manifest. The
+          strip is doubled in width to loop seamlessly and translates
+          rightward every time the belt moves between stations. */}
       <div
         className="absolute z-10 pointer-events-none overflow-hidden"
         style={{ left: 0, top: BELT_Y, width: 5760, height: 120 }}
       >
         <div
+          className="flex"
           style={{
-            width: 11520, // double width for seamless wrap
+            width: 11520,
             height: 120,
             transform: `translateX(${beltImageX % 5760}px)`,
-            backgroundImage:
-              'repeating-linear-gradient(90deg, #333 0px, #333 60px, #444 60px, #444 120px)',
-            borderTop: '6px solid #555',
-            borderBottom: '6px solid #555',
+            transition: 'transform 0.05s linear',
           }}
-        />
+        >
+          <AssetImage
+            assetKey="conveyor_strip"
+            className="w-[5760px] h-[120px] object-cover shrink-0"
+            showLabel={false}
+          />
+          <AssetImage
+            assetKey="conveyor_strip"
+            className="w-[5760px] h-[120px] object-cover shrink-0"
+            showLabel={false}
+          />
+        </div>
       </div>
 
       {/* Station labels */}
@@ -380,7 +389,7 @@ export function Assemble({ tool, onComplete }: AssembleProps) {
         pose={bound ? 'celebrate' : 'talk'}
         message={loriMessage}
         x={80}
-        y={780}
+        y={380}
         bigFly={bound}
       />
     </div>

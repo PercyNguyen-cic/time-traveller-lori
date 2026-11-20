@@ -1,4 +1,5 @@
 import AssetImage from '@/components/AssetImage';
+import { SCREEN_WIDTH } from '@/game/toolData';
 import { Sound } from '@/game/sound';
 
 interface LoadingScreenProps {
@@ -26,9 +27,15 @@ interface LoadingScreenProps {
  */
 export function LoadingScreen({ onStart }: LoadingScreenProps) {
   function handleStart() {
+    Sound.unlock();
     Sound.pop();
     onStart();
   }
+
+  /* Bottom-right of the middle screen (screen 2 = 1920..3840)
+     Place the 180px button near x≈3600, y≈820 in stage coords. */
+  const playBtnLeft = SCREEN_WIDTH + SCREEN_WIDTH * 0.85 - 90; // ≈3552
+  const playBtnTop = 820;
 
   return (
     <div
@@ -46,7 +53,7 @@ export function LoadingScreen({ onStart }: LoadingScreenProps) {
       {/* Animation slot - replace this placeholder with your own animation */}
       <div
         className="absolute z-10 anim-loading-breath flex items-center justify-center"
-        style={{ left: 2880 - 200, top: 300, width: 400, height: 400 }}
+        style={{ left: SCREEN_WIDTH + SCREEN_WIDTH / 2 - 200, top: 300, width: 400, height: 400 }}
       >
         <div
           className="rounded-full border-8 border-amber-400/60 flex items-center justify-center"
@@ -74,8 +81,8 @@ export function LoadingScreen({ onStart }: LoadingScreenProps) {
         }}
         className="anim-play-pulse absolute z-20 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-center shadow-2xl ring-8 ring-white/30"
         style={{
-          left: 2880 + SCREEN_W * 0.5 - 120, // bottom-right area of middle screen
-          top: 820,
+          left: playBtnLeft,
+          top: playBtnTop,
           width: 180,
           height: 180,
         }}
@@ -93,5 +100,3 @@ export function LoadingScreen({ onStart }: LoadingScreenProps) {
     </div>
   );
 }
-
-const SCREEN_W = 1920;

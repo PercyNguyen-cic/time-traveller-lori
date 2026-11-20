@@ -1,57 +1,93 @@
 import { useState, useCallback } from 'react';
 import Stage from '@/components/Stage';
-import { Attract, Select } from '@/game/phases/Phase1';
+import { LoadingScreen } from '@/game/phases/LoadingScreen';
+import { Greeting, Select } from '@/game/phases/Phase1';
+import { VariantSelect } from '@/game/phases/VariantSelect';
 import { Forage } from '@/game/phases/Phase2';
 import { Assemble } from '@/game/phases/Phase3';
 import { Reveal } from '@/game/phases/Phase4';
 import { Sound } from '@/game/sound';
-import type { Phase, ToolSpec } from '@/game/types';
+import type { Phase, ToolSpec, ResolvedTool } from '@/game/types';
 
 export default function App() {
-  const [phase, setPhase] = useState<Phase>('attract');
+  const [phase, setPhase] = useState<Phase>('loading');
   const [selectedTool, setSelectedTool] = useState<ToolSpec | null>(null);
+  const [resolvedTool, setResolvedTool] = useState<ResolvedTool | null>(null);
 
-  const handleStart = useCallback(() => {
+  /* Loading → Greeting */
+  const handleLoadingStart = useCallback(() => {
     Sound.unlock();
+    setPhase('greeting');
+  }, []);
+
+  /* Greeting → Select */
+  const handleGreetingComplete = useCallback(() => {
     setPhase('select');
   }, []);
 
+  /* Select → Variant */
   const handleSelect = useCallback((tool: ToolSpec) => {
     setSelectedTool(tool);
+    setPhase('variant');
+  }, []);
+
+  /* Variant → Forage */
+  const handleVariantComplete = useCallback((resolved: ResolvedTool) => {
+    setResolvedTool(resolved);
     setPhase('forage');
   }, []);
 
+  /* Variant ← back to Select */
+  const handleVariantBack = useCallback(() => {
+    setSelectedTool(null);
+    setPhase('select');
+  }, []);
+
+  /* Forage → Assemble */
   const handleForageComplete = useCallback(() => {
     setPhase('assemble');
   }, []);
 
+  /* Assemble → Reveal */
   const handleAssembleComplete = useCallback(() => {
     setPhase('reveal');
   }, []);
 
+  /* Reveal → Select (make another) */
   const handleMakeAnother = useCallback(() => {
     setSelectedTool(null);
+    setResolvedTool(null);
     setPhase('select');
   }, []);
 
+  /* Reveal → Loading (all done) */
   const handleAllDone = useCallback(() => {
     setSelectedTool(null);
-    setPhase('attract');
+    setResolvedTool(null);
+    setPhase('loading');
   }, []);
 
   return (
     <Stage>
-      {phase === 'attract' && <Attract onStart={handleStart} />}
+      {phase === 'loading' && <LoadingScreen onStart={handleLoadingStart} />}
+      {phase === 'greeting' && <Greeting onComplete={handleGreetingComplete} />}
       {phase === 'select' && <Select onSelect={handleSelect} />}
-      {phase === 'forage' && selectedTool && (
-        <Forage tool={selectedTool} onComplete={handleForageComplete} />
-      )}
-      {phase === 'assemble' && selectedTool && (
-        <Assemble tool={selectedTool} onComplete={handleAssembleComplete} />
-      )}
-      {phase === 'reveal' && selectedTool && (
-        <Reveal
+      {phase === 'variant' && selectedTool && (
+        <VariantSelect
           tool={selectedTool}
+          onComplete={handleVariantComplete}
+          onBack={handleVariantBack}
+        />
+      )}
+      {phase === 'forage' && resolvedTool && (
+        <Forage tool={resolvedTool} onComplete={handleForageComplete} />
+      )}
+      {phase === 'assemble' && resolvedTool && (
+        <Assemble tool={resolvedTool} onComplete={handleAssembleComplete} />
+      )}
+      {phase === 'reveal' && resolvedTool && (
+        <Reveal
+          tool={resolvedTool}
           onMakeAnother={handleMakeAnother}
           onAllDone={handleAllDone}
         />

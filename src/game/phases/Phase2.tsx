@@ -139,7 +139,7 @@ export function Forage({ tool, onComplete }: ForageProps) {
         pose="talk"
         message={`Find the 3 materials for the ${tool.shortName}! Run and tap them!`}
         x={80}
-        y={760}
+        y={380}
       />
     </div>
   );

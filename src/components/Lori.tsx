@@ -14,16 +14,20 @@ interface LoriProps {
   bigFly?: boolean;
 }
 
+/** Lori sprite size — roughly half the 1080px stage height */
+const LORI_SIZE = 540;
+
 /**
  * Lori, the time-traveling robot beetle mascot.
- * Renders as a floating character that drifts around her anchor point
- * while talking, with a speech bubble.
+ * Renders as a large floating character that drifts in a gentle figure-8
+ * around her anchor point while talking.  The speech bubble stays anchored
+ * so kids can read it comfortably.
  */
 export default function Lori({
   pose,
   message,
   x = 80,
-  y = 780,
+  y = 400,
   chimeOnChange = true,
   bigFly = false,
 }: LoriProps) {
@@ -58,11 +62,12 @@ export default function Lori({
   return (
     <div
       className="absolute z-40 flex flex-col items-start"
-      style={{ left: x, top: y, width: 420 }}
+      style={{ left: x, top: y, width: LORI_SIZE + 160 }}
     >
+      {/* Speech bubble — anchored above Lori, does not float */}
       {shownMessage && (
         <div
-          className="anim-speech-pop mb-3 ml-12 max-w-[400px] rounded-3xl bg-yellow-50 border-4 border-yellow-300 px-6 py-4 shadow-2xl"
+          className="anim-speech-pop mb-3 ml-12 max-w-[520px] rounded-3xl bg-yellow-50 border-4 border-yellow-300 px-6 py-4 shadow-2xl"
           style={{ minHeight: 80 }}
         >
           <p className="text-2xl font-bold text-slate-800 leading-snug">{shownMessage}</p>
@@ -77,7 +82,12 @@ export default function Lori({
           />
         </div>
       )}
-      <div className={`${flyAnim} relative`} style={{ width: 280, height: 280 }}>
+
+      {/* Lori sprite — large & floating */}
+      <div
+        className={`${flyAnim} relative`}
+        style={{ width: LORI_SIZE, height: LORI_SIZE }}
+      >
         <AssetImage
           assetKey={assetKey}
           className="w-full h-full object-contain"

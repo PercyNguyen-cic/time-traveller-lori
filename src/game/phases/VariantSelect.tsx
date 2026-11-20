@@ -162,8 +162,8 @@ export function VariantSelect({ tool, onComplete, onBack }: VariantSelectProps) 
       <Lori
         pose="talk"
         message="Pick which material you want for each part! Tap two cards, then start building!"
-        x={2660}
-        y={780}
+        x={2460}
+        y={380}
       />
     </div>
   );

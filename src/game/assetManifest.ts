@@ -25,6 +25,9 @@ export const ASSET_MANIFEST: Record<string, AssetEntry> = {
   bg_museum: { path: '/assets/backgrounds/bg_museum.png', label: 'Museum display room' },
   bg_goodbye: { path: '/assets/backgrounds/bg_goodbye.png', label: 'Goodbye screen background' },
 
+  // ---- Conveyor ----
+  conveyor_strip: { path: '/assets/tools/conveyor_strip.png', label: 'Conveyor belt strip' },
+
   // ---- Bow & Arrow ----
   bow_card: { path: '/assets/tools/bow_card.png', label: 'Bow & Arrow card' },
   bow_branch_dogwood_raw: { path: '/assets/tools/bow_branch_dogwood_raw.png', label: 'Raw dogwood branch' },

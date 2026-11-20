@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Lori from '@/components/Lori';
 import AssetImage from '@/components/AssetImage';
 import { TOOLS, SCREEN_WIDTH } from '@/game/toolData';
@@ -8,42 +8,29 @@ import type { ToolSpec } from '@/game/types';
 const GREETING =
   'Bzzzt! Hi there, time-traveler! I am Lori, your beetle buddy! Let us zoom back in time to discover how Indigenous peoples made amazing tools using just the earth around them!';
 
-const STAGE_W = 5760;
+/* ─── Greeting ─── */
 
-interface AttractProps {
-  onStart: () => void;
+interface GreetingProps {
+  onComplete: () => void;
 }
 
-export function Attract({ onStart }: AttractProps) {
-  const [booted, setBooted] = useState(false);
+/**
+ * Lori drops in large and delivers the welcome message.
+ * After 3.5 seconds the view automatically advances to tool selection.
+ */
+export function Greeting({ onComplete }: GreetingProps) {
+  const [ready, setReady] = useState(false);
 
-  function handleStart() {
-    Sound.pop();
-    setBooted(true);
-    setTimeout(onStart, 2600);
-  }
+  useEffect(() => {
+    // small delay so the drop-in animation plays first
+    const show = setTimeout(() => setReady(true), 300);
+    const advance = setTimeout(onComplete, 3500);
+    return () => {
+      clearTimeout(show);
+      clearTimeout(advance);
+    };
+  }, [onComplete]);
 
-  if (!booted) {
-    return (
-      <div className="absolute inset-0 flex items-center justify-center anim-fade-in">
-        <AssetImage
-          assetKey="bg_attract"
-          className="absolute inset-0 w-full h-full object-cover"
-          showLabel={false}
-        />
-        <div className="absolute inset-0 bg-black/40" />
-        <button
-          onClick={handleStart}
-          className="relative z-10 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-20 py-12 text-6xl font-extrabold text-white shadow-2xl ring-8 ring-white/30 transition-transform hover:scale-105 active:scale-95"
-          style={{ minWidth: 400, minHeight: 160 }}
-        >
-          Tap to Start
-        </button>
-      </div>
-    );
-  }
-
-  // Boot sequence: Lori drops in and greets
   return (
     <div className="absolute inset-0 flex items-center justify-center anim-fade-in">
       <AssetImage
@@ -52,17 +39,22 @@ export function Attract({ onStart }: AttractProps) {
         showLabel={false}
       />
       <div className="absolute inset-0 bg-black/30" />
-      <Lori
-        pose="drop"
-        message={GREETING}
-        x={2660}
-        y={400}
-        chimeOnChange={false}
-        bigFly
-      />
+
+      {ready && (
+        <Lori
+          pose="drop"
+          message={GREETING}
+          x={SCREEN_WIDTH + SCREEN_WIDTH / 2 - 350}
+          y={180}
+          chimeOnChange={false}
+          bigFly
+        />
+      )}
     </div>
   );
 }
+
+/* ─── Select ─── */
 
 interface SelectProps {
   onSelect: (tool: ToolSpec) => void;
@@ -125,7 +117,7 @@ export function Select({ onSelect }: SelectProps) {
         pose="wave"
         message="Tap a tool card to start building!"
         x={80}
-        y={760}
+        y={380}
       />
     </div>
   );
