@@ -1,4 +1,4 @@
-export type Phase = 'loading' | 'greeting' | 'select' | 'variant' | 'forage' | 'assemble' | 'reveal';
+export type Phase = 'loading' | 'greeting' | 'select' | 'forage' | 'assemble' | 'reveal';
 
 export type MaterialCategory = 'wood' | 'stone' | 'bone' | 'cordage';
 
@@ -8,6 +8,8 @@ export interface MaterialVariant {
   rawAsset: string;
   shapedAsset?: string;
   finalAsset: string;
+  forageX?: number;
+  forageY?: number;
 }
 
 export interface MaterialSpec {

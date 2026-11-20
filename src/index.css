@@ -96,32 +96,32 @@ body,
 }
 .anim-fly { animation: fly-to-tray 0.6s ease-in forwards; }
 
-/* Lori flying - gentle figure-8 drift around her anchor point */
+/* Lori flying - smooth continuous figure-8 hover (linear timing = no pauses) */
 @keyframes lori-fly {
-  0%   { transform: translate(0px, 0px) rotate(-2deg); }
-  12%  { transform: translate(50px, -30px) rotate(2deg); }
-  25%  { transform: translate(70px, -55px) rotate(4deg); }
-  37%  { transform: translate(40px, -70px) rotate(1deg); }
-  50%  { transform: translate(0px, -50px) rotate(-3deg); }
-  62%  { transform: translate(-40px, -30px) rotate(-5deg); }
-  75%  { transform: translate(-60px, -10px) rotate(-2deg); }
-  87%  { transform: translate(-30px, 10px) rotate(1deg); }
-  100% { transform: translate(0px, 0px) rotate(-2deg); }
+  0%     { transform: translate(0px, 0px) rotate(-1deg); }
+  12.5%  { transform: translate(32px, 25px) rotate(1.5deg); }
+  25%    { transform: translate(45px, 0px) rotate(2.5deg); }
+  37.5%  { transform: translate(32px, -25px) rotate(1deg); }
+  50%    { transform: translate(0px, 0px) rotate(-1deg); }
+  62.5%  { transform: translate(-32px, 25px) rotate(-2.5deg); }
+  75%    { transform: translate(-45px, 0px) rotate(-1.5deg); }
+  87.5%  { transform: translate(-32px, -25px) rotate(0.5deg); }
+  100%   { transform: translate(0px, 0px) rotate(-1deg); }
 }
-.anim-lori-fly { animation: lori-fly 6s ease-in-out infinite; }
+.anim-lori-fly { animation: lori-fly 6s linear infinite; }
 
 @keyframes lori-fly-big {
-  0%   { transform: translate(0px, 0px) rotate(-4deg) scale(1); }
-  12%  { transform: translate(70px, -40px) rotate(3deg) scale(1.03); }
-  25%  { transform: translate(90px, -80px) rotate(5deg) scale(1.05); }
-  37%  { transform: translate(50px, -100px) rotate(2deg) scale(1.03); }
-  50%  { transform: translate(0px, -70px) rotate(-4deg) scale(1); }
-  62%  { transform: translate(-50px, -40px) rotate(-6deg) scale(1.03); }
-  75%  { transform: translate(-70px, -10px) rotate(-3deg) scale(1.05); }
-  87%  { transform: translate(-30px, 15px) rotate(0deg) scale(1.02); }
-  100% { transform: translate(0px, 0px) rotate(-4deg) scale(1); }
+  0%     { transform: translate(0px, 0px) rotate(-2deg) scale(1); }
+  12.5%  { transform: translate(50px, 40px) rotate(2deg) scale(1.03); }
+  25%    { transform: translate(70px, 0px) rotate(3deg) scale(1.05); }
+  37.5%  { transform: translate(50px, -40px) rotate(1deg) scale(1.03); }
+  50%    { transform: translate(0px, 0px) rotate(-2deg) scale(1); }
+  62.5%  { transform: translate(-50px, 40px) rotate(-3deg) scale(1.03); }
+  75%    { transform: translate(-70px, 0px) rotate(-2deg) scale(1.05); }
+  87.5%  { transform: translate(-50px, -40px) rotate(1deg) scale(1.02); }
+  100%   { transform: translate(0px, 0px) rotate(-2deg) scale(1); }
 }
-.anim-lori-fly-big { animation: lori-fly-big 8s ease-in-out infinite; }
+.anim-lori-fly-big { animation: lori-fly-big 8s linear infinite; }
 
 /* Loading screen pulsing play button */
 @keyframes play-pulse {

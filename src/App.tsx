@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 import Stage from '@/components/Stage';
 import { LoadingScreen } from '@/game/phases/LoadingScreen';
 import { Greeting, Select } from '@/game/phases/Phase1';
-import { VariantSelect } from '@/game/phases/VariantSelect';
 import { Forage } from '@/game/phases/Phase2';
 import { Assemble } from '@/game/phases/Phase3';
 import { Reveal } from '@/game/phases/Phase4';
@@ -25,26 +24,15 @@ export default function App() {
     setPhase('select');
   }, []);
 
-  /* Select → Variant */
+  /* Select → Forage (selection happens in-world during foraging) */
   const handleSelect = useCallback((tool: ToolSpec) => {
     setSelectedTool(tool);
-    setPhase('variant');
-  }, []);
-
-  /* Variant → Forage */
-  const handleVariantComplete = useCallback((resolved: ResolvedTool) => {
-    setResolvedTool(resolved);
     setPhase('forage');
   }, []);
 
-  /* Variant ← back to Select */
-  const handleVariantBack = useCallback(() => {
-    setSelectedTool(null);
-    setPhase('select');
-  }, []);
-
-  /* Forage → Assemble */
-  const handleForageComplete = useCallback(() => {
+  /* Forage → Assemble (provides the resolved tool with chosen variants) */
+  const handleForageComplete = useCallback((resolved: ResolvedTool) => {
+    setResolvedTool(resolved);
     setPhase('assemble');
   }, []);
 
@@ -72,15 +60,8 @@ export default function App() {
       {phase === 'loading' && <LoadingScreen onStart={handleLoadingStart} />}
       {phase === 'greeting' && <Greeting onComplete={handleGreetingComplete} />}
       {phase === 'select' && <Select onSelect={handleSelect} />}
-      {phase === 'variant' && selectedTool && (
-        <VariantSelect
-          tool={selectedTool}
-          onComplete={handleVariantComplete}
-          onBack={handleVariantBack}
-        />
-      )}
-      {phase === 'forage' && resolvedTool && (
-        <Forage tool={resolvedTool} onComplete={handleForageComplete} />
+      {phase === 'forage' && selectedTool && (
+        <Forage tool={selectedTool} onComplete={handleForageComplete} />
       )}
       {phase === 'assemble' && resolvedTool && (
         <Assemble tool={resolvedTool} onComplete={handleAssembleComplete} />

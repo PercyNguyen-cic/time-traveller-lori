@@ -61,7 +61,7 @@ export default function Lori({
 
   return (
     <div
-      className="absolute z-40 flex flex-col items-start"
+      className="absolute z-40 flex flex-col items-start pointer-events-none select-none"
       style={{ left: x, top: y, width: LORI_SIZE + 160 }}
     >
       {/* Speech bubble — anchored above Lori, does not float */}
